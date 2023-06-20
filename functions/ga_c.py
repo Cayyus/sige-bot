@@ -18,7 +18,7 @@ async def ga(interaction, proposal_id: int):
 
             name_element = res_element.find("NAME")
             if name_element is None:
-                # Handle the case where the NAME element is not found
+                
                 await interaction.response.send_message("Unable to retrieve resolution name.")
                 return
 
