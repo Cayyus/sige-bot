@@ -15,38 +15,36 @@ async def dispatch(interaction, dispatch_link: str):
 
             dispatch = root.find("DISPATCH")
             if dispatch is None:
-                await interaction.response.send_message("Unable to retrieve resolution information.")
                 return
                 
             title_ele = dispatch.find("TITLE")
             if title_ele is None:
-                await interaction.response.send_message("Unable to retrieve resolution information.")
                 return
                 
             title = title_ele.text
 
             author_ele = dispatch.find("AUTHOR")
             if author_ele is None:
-                await interaction.response.send_message("Unable to retrieve resolution information.")
+                return
 
             author = author_ele.text
             author_link = f"https://www.nationstates.net/nation={author}"
 
             creation_date_ele = dispatch.find("CREATED")
             if creation_date_ele is None:
-                await interaction.response.send_message("Unable to retrieve resolution information.")
+                return
                 
             creation_date = creation_date_ele.text
 
             views_ele = dispatch.find("VIEWS")
             if views_ele is None:
-                await interaction.response.send_message("Unable to retrieve resolution information.")
+                return
                 
             views = views_ele.text
 
             score_ele = dispatch.find("SCORE")
             if score_ele is None:
-                await interaction.response.send_message("Unable to retrieve resolution information.")
+                return
                 
             scores = score_ele.text
 
