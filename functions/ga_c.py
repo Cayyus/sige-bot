@@ -32,7 +32,7 @@ async def ga(interaction, proposal_id: int):
             
             author_element = res_element.find("PROPOSED_BY")
             if date_element is None:
-                # Handle the case where the IMPLEMENTED element is not found
+                
                 await interaction.response.send_message("Unable to retrieve author.")
                 return
 
