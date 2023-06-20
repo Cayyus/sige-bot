@@ -40,7 +40,7 @@ async def nations_not_endorsing(interaction, nation_name: str, region_name: str)
     for i, string in enumerate(unnations_strings, 1):
         response_message += f"String {i}: {string}\n"
     
-    # Split the response into multiple messages based on character limit
+    
     messages = []
     current_message = ""
     for line in response_message.splitlines():
