@@ -1,2 +1,1 @@
-A Multi-purpose NationStates bot, can return nation information, write dispatches, as well as generate information about dispatches, compile a list of NNEs (Nations Not Endorsing) and
-give general information about a particular nation. More commands will be added as I work on this more.
+A Multi-purpose NationStates bot, can return nation information, generate information about dispatches, compile a list of NNEs (Nations Not Endorsing) and return information about General Assembly proposals. More commands will be added as I work on this.
