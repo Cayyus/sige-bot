@@ -50,7 +50,7 @@ async def nations_not_endorsing(interaction, nation_name: str, region_name: str)
         current_message += line + "\n"
     messages.append(current_message)
     
-    # Send the messages
+    
     for i, message in enumerate(messages):
         if i == 0:
             await interaction.response.send_message(message)
