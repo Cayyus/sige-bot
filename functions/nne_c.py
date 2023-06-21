@@ -3,6 +3,7 @@ from discord import app_commands
 import aiohttp
 import re
 from credentials import headers
+import asyncio
 
 async def nations_not_endorsing(interaction, nation_name: str, region_name: str):
     url_endo = f"https://www.nationstates.net/cgi-bin/api.cgi?nation={nation_name}&q=endorsements"
@@ -20,7 +21,7 @@ async def nations_not_endorsing(interaction, nation_name: str, region_name: str)
         extracted_data = endorsements.group(1)
         endorsements_list = extracted_data.split(',')
     else:
-        await interaction.response.send_message("Endorsements not found in the XML data.")
+        await interaction.response.send_message("Endorsements not found in the data.")
         return
     
     unnations = re.search(r"<UNNATIONS>(.*?)</UNNATIONS>", region_wa, re.DOTALL)
@@ -28,33 +29,33 @@ async def nations_not_endorsing(interaction, nation_name: str, region_name: str)
         extracted_data_region = unnations.group(1)
         unnations_list = extracted_data_region.split(',')
     else:
-        await interaction.response.send_message("UNNATIONS not found in the XML data.")
+        await interaction.response.send_message("UNNATIONS not found in the data.")
         return
     
     unnations_only = list(set(unnations_list) - set(endorsements_list))
     
-    nations_per_string = 8
-    unnations_strings = [', '.join(unnations_only[i:i+nations_per_string]) for i in range(0, len(unnations_only), nations_per_string)]
-    
-    response_message = f"Nations Not Endorsing {nation_name}:\n"
-    for i, string in enumerate(unnations_strings, 1):
-        response_message += f"String {i}: {string}\n"
-    
-    
-    messages = []
-    current_message = ""
-    for line in response_message.splitlines():
-        if len(current_message) + len(line) > 2000:
-            messages.append(current_message)
-            current_message = ""
-        current_message += line + "\n"
-    messages.append(current_message)
-    
-    
-    for i, message in enumerate(messages):
-        if i == 0:
-            await interaction.response.send_message(message)
-        else:
-            await interaction.followup.send(message)
+    with open("sent_nations.txt", "r+") as file:
+        sent_nations = file.read().splitlines()
+
+        if not sent_nations:
+            sent_nations = []
+
+        new_nations = [nation for nation in unnations_only if nation not in sent_nations]
+
+        if not new_nations:
+            await interaction.response.send_message("All nations have been sent.")
+            return
+
+        chunk_size = 8
+        chunk = new_nations[:chunk_size]
+        sent_nations += chunk
+        file.seek(0)
+        file.write("\n".join(sent_nations))
+        file.truncate()
+
+        embed = discord.Embed(title="Nations Not Endorsing", color=0x00ff00)
+        nation_list = "\n".join(chunk)
+        embed.add_field(name="Nations", value=nation_list, inline=False)
+        await interaction.response.send_message(embed=embed)
 
 
