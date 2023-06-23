@@ -44,4 +44,8 @@ async def register_command(interaction, nation_name: str, nation_password: str):
 async def write_command(interaction, title: str, body: str):
     await dispatch_write(interaction, title, body)
 
+@tree.command(name = 'sc', description='To see information about a Security Council proposal')
+async def sc_command(interaction, proposal_id: int):
+    await sc(interaction, proposal_id)
+
 client.run(TOKEN)
