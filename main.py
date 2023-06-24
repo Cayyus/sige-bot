@@ -48,4 +48,8 @@ async def write_command(interaction, title: str, body: str):
 async def sc_command(interaction, proposal_id: int):
     await sc(interaction, proposal_id)
 
+@tree.command(name = 'wanations', description='To see all WA nations in a region, used for Nations Not Endorsed by (NNB)')
+async def wa_nations_command(interaction, region_name: str):
+    await wa_nations(interaction, region_name)
+
 client.run(TOKEN)
