@@ -18,6 +18,7 @@ async def nation(interaction, nation_name: str):
                 endorsed_by = root.find("ENDORSEMENTS").text
                 wa_status = root.find('UNSTATUS').text
                 category = root.find('CATEGORY').text
+                last_activity = root.find('LASTLOGIN').text
                 if endorsed_by is None:
                     endorsements = None
                 else:
@@ -26,10 +27,11 @@ async def nation(interaction, nation_name: str):
                 region_link = f'https://www.nationstates.net/region={region.replace(" ", "_")}'
 
                 nation_embed_points = [
-                    f"- `Founded`: <t:{founded}:D>",
-                    f"- `Classification: {category}`",
-                    f"- `WA Status: {wa_status}`",
-                    f"- `Endorsements: {endorsements}`"
+                    f"- Founded: <t:{founded}:D>",
+                    f"- Classification: `{category}`",
+                    f"- World Assembly Status: `{wa_status}`",
+                    f"- Endorsements: `{endorsements}`",
+                    f"- Last Online: <t:{last_activity}:R>"
                 ]
 
     nation_embed = "\n".join(nation_embed_points)
