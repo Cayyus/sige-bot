@@ -3,11 +3,12 @@ from discord import app_commands
 from credentials import TOKEN
 from functions.dispatch_c import dispatch
 from functions.WA.ga_c import ga
+from functions.WA.sc_c import sc
 from functions.nation_c import nation
 from functions.nne_c import nations_not_endorsing
 from functions.privateshards.nationregistration import nation_register
 from functions.privateshards.dispatch_writer import dispatch_write
-
+from functions.wa_nations_c import wa_nations
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -33,8 +34,8 @@ async def dispatch_command(interaction, dispatch_link: str):
     await dispatch(interaction, dispatch_link)
 
 @tree.command(name = 'nne', description='Nations Not Endorsing (NNE), generates a list of nations havent endorsed the target nation')
-async def nne_command(interaction, nation_name: str, region_name: str):
-    await nations_not_endorsing(interaction, nation_name, region_name)
+async def nne_command(interaction, nation_name: str, region_name: str, message: str):
+    await nations_not_endorsing(interaction, nation_name, region_name, message)
 
 @tree.command(name = 'register', description='Register a nation to access its private shards')
 async def register_command(interaction, nation_name: str, nation_password: str):
@@ -48,7 +49,7 @@ async def write_command(interaction, title: str, body: str):
 async def sc_command(interaction, proposal_id: int):
     await sc(interaction, proposal_id)
 
-@tree.command(name = 'wanations', description='To see all WA nations in a region, used for Nations Not Endorsed by (NNB)')
+@tree.command(name = 'wanations', description='To see all WA nations in a region')
 async def wa_nations_command(interaction, region_name: str):
     await wa_nations(interaction, region_name)
 
