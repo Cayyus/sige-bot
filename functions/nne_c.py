@@ -1,11 +1,12 @@
 import discord
 from discord import app_commands
+from discord.ui import Button
 import aiohttp
 import re
 from credentials import headers
-import asyncio
 
-async def nations_not_endorsing(interaction, nation_name: str, region_name: str):
+
+async def nations_not_endorsing(interaction, nation_name: str, region_name: str, message: str):
     url_endo = f"https://www.nationstates.net/cgi-bin/api.cgi?nation={nation_name}&q=endorsements"
     url_region_wa = f"https://www.nationstates.net/cgi-bin/api.cgi?region={region_name}&q=wanations"
     
@@ -32,7 +33,7 @@ async def nations_not_endorsing(interaction, nation_name: str, region_name: str)
         await interaction.response.send_message("UNNATIONS not found in the data.")
         return
     
-    unnations_only = list(set(unnations_list) - set(endorsements_list))
+    nne = list(set(unnations_list) - set(endorsements_list))
     
     with open("sent_nations.txt", "r+") as file:
         sent_nations = file.read().splitlines()
@@ -40,7 +41,7 @@ async def nations_not_endorsing(interaction, nation_name: str, region_name: str)
         if not sent_nations:
             sent_nations = []
 
-        new_nations = [nation for nation in unnations_only if nation not in sent_nations]
+        new_nations = [nation for nation in nne if nation not in sent_nations]
 
         if not new_nations:
             await interaction.response.send_message("All nations have been sent.")
@@ -54,8 +55,18 @@ async def nations_not_endorsing(interaction, nation_name: str, region_name: str)
         file.truncate()
 
         embed = discord.Embed(title="Nations Not Endorsing", color=0x00ff00)
-        nation_list = "\n".join(chunk)
-        embed.add_field(name="Nations", value=nation_list, inline=False)
-        await interaction.response.send_message(embed=embed)
+        nation_list = ", ".join(chunk)
+        embed.add_field(name="Nations", value=nation_list, inline=True)
+
+        view = discord.ui.View()
+
+        # Generate individual URLs for each nation
+        for nation in chunk:
+            url = f"https://www.nationstates.net/page=compose_telegram?tgto={nation}&message={message}"
+            button = discord.ui.Button(style=discord.ButtonStyle.link, label='Open Telegram', url=url)
+            view.add_item(button)
+
+        embed.set_footer(text='Open Telegram')
+        await interaction.response.send_message(embed=embed, view=view)
 
 
