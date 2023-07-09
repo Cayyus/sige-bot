@@ -8,7 +8,7 @@ from functions.nation_c import nation
 from functions.nne_c import nations_not_endorsing
 from functions.privateshards.nationregistration import nation_register
 from functions.privateshards.dispatch_writer import dispatch_write
-from functions.wa_nations_c import wa_nations
+from functions.region_c import region
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -24,6 +24,10 @@ async def on_ready():
 @tree.command(name = 'nation', description='Sends information about a particular nation')
 async def nation_command(interaction, nation_name: str):
     await nation(interaction, nation_name)
+
+@tree.command(name = 'region', description='To see information about a particular region')
+async def region_command(interaction, region_name: str):
+    await region(interaction, region_name)
 
 @tree.command(name='ga', description='To see information about the General Assembly')
 async def ga_command(interaction, proposal_id: int):
@@ -49,8 +53,5 @@ async def write_command(interaction, title: str, body: str):
 async def sc_command(interaction, proposal_id: int):
     await sc(interaction, proposal_id)
 
-@tree.command(name = 'wanations', description='To see all WA nations in a region')
-async def wa_nations_command(interaction, region_name: str):
-    await wa_nations(interaction, region_name)
-
 client.run(TOKEN)
+
