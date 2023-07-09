@@ -95,7 +95,7 @@ async def region(interaction, region_name: str):
 
                 
             region_bullet = [
-                ("Delegate", f"`[{delegate}](https://www.nationstates.net/nation={delegate})`"),
+                ("Delegate", f"[{delegate}](https://www.nationstates.net/nation={delegate})"),
                 ("Regional Officers", f"`{officers_num}`"),
                 ("Nations", f"`{nations}`"),
                 ("Power", f"`{power}`"),
