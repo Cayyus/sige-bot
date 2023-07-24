@@ -5,43 +5,49 @@ import xml.etree.ElementTree as ET
 from credentials import headers
 
 async def ga(interaction, proposal_id: int):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f'https://www.nationstates.net/cgi-bin/api.cgi?wa=1&id={proposal_id}&q=resolution', headers=headers) as response:
-            data = await response.text()
-            root = ET.fromstring(data)
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'https://www.nationstates.net/cgi-bin/api.cgi?wa=1&id={proposal_id}&q=resolution', headers=headers) as response:
+                data = await response.text()
+                root = ET.fromstring(data)
+                
+                resolution = root.find('RESOLUTION')
 
-            res_element = root.find("RESOLUTION")
-            if res_element is None:
-                # Handle the case where the RESOLUTION element is not found
-                await interaction.response.send_message("Unable to retrieve resolution information.")
-                return
+                name = resolution.find('NAME').text
+                category = resolution.find('CATEGORY').text
+                date_passed = resolution.find('IMPLEMENTED').text
+                for_votes = resolution.find('TOTAL_VOTES_FOR').text
+                against_votes = resolution.find('TOTAL_VOTES_AGAINST').text
+                created = resolution.find('CREATED').text
+                author = resolution.find('PROPOSED_BY').text
 
-            name_element = res_element.find("NAME")
-            if name_element is None:
-                # Handle the case where the NAME element is not found
-                await interaction.response.send_message("Unable to retrieve resolution name.")
-                return
+                link = f"https://www.nationstates.net/page=WA_past_resolution/id={proposal_id}/council=1"
+                author_nation_link = f"https://www.nationstates.net/nation={author_nation_link}"
+    except:
+        await interaction.response.send_message('Resolution not found, try again.')
 
-            res = name_element.text
+    bullet = [
+        f"- Category: `{category}`",
+        f"- Author: [{author}]({author_nation_link})",
+        f"- Created on: <t:{created}:F>"
+    ]
 
-            date_element = res_element.find("IMPLEMENTED")
-            if date_element is None:
-                # Handle the case where the IMPLEMENTED element is not found
-                await interaction.response.send_message("Unable to retrieve implementation date.")
-                return
-            
-            author_element = res_element.find("PROPOSED_BY")
-            if date_element is None:
-                # Handle the case where the IMPLEMENTED element is not found
-                await interaction.response.send_message("Unable to retrieve author.")
-                return
+    ga_embed = [
+        ('Date Passed', f"<t:{date_passed}:F>"),
+        ('For', f"`{for_votes}`"),
+        ('Against', f"`{against_votes}`")
+    ]
 
-            author = author_element.text
-            
-            date = date_element.text
-            formatted_date = f"<t:{date}:R>"
+    ga_bullet = '\n'.join(bullet)
+    embed = discord.Embed(title=name, url=link)
+    embed.add_field('\u200b', value=ga_bullet, inline=False)
 
-            link = f"https://www.nationstates.net/page=WA_past_resolution/id={proposal_id}/council=1"
+    for field in ga_embed:
+        embed.add_field(name=field[0], value=field[1], inline=True)
+
+    embed.set_thumbnail(url="https://www.nationstates.net/images/ga.jpg")
+    await interaction.response.send_message(embed=embed)
+
 
     embed = discord.Embed(title=res, url=link)
     embed.add_field(name="Date of Implementation", value=formatted_date)
