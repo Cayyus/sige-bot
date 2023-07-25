@@ -22,7 +22,7 @@ async def ga(interaction, proposal_id: int):
                 author = resolution.find('PROPOSED_BY').text
 
                 link = f"https://www.nationstates.net/page=WA_past_resolution/id={proposal_id}/council=1"
-                author_nation_link = f"https://www.nationstates.net/nation={author_nation_link}"
+                author_nation_link = f"https://www.nationstates.net/nation={author}"
     except:
         await interaction.response.send_message('Resolution not found, try again.')
 
@@ -40,7 +40,7 @@ async def ga(interaction, proposal_id: int):
 
     ga_bullet = '\n'.join(bullet)
     embed = discord.Embed(title=name, url=link)
-    embed.add_field('\u200b', value=ga_bullet, inline=False)
+    embed.add_field(name='\u200b', value=ga_bullet, inline=False)
 
     for field in ga_embed:
         embed.add_field(name=field[0], value=field[1], inline=True)
