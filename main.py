@@ -5,7 +5,6 @@ from functions.dispatch_c import dispatch
 from functions.WA.ga_c import ga
 from functions.WA.sc_c import sc
 from functions.nation_c import nation
-from functions.nne_c import nations_not_endorsing
 from functions.region_c import region
 
 intents = discord.Intents.default()
@@ -34,10 +33,6 @@ async def ga_command(interaction, proposal_id: int):
 @tree.command(name='dispatch', description='To see information about a dispatch')
 async def dispatch_command(interaction, dispatch_link: str):
     await dispatch(interaction, dispatch_link)
-
-@tree.command(name = 'nne', description='Nations Not Endorsing (NNE), generates a list of nations havent endorsed the target nation')
-async def nne_command(interaction, nation_name: str, region_name: str, message: str):
-    await nations_not_endorsing(interaction, nation_name, region_name, message)
 
 @tree.command(name = 'sc', description='To see information about a Security Council proposal')
 async def sc_command(interaction, proposal_id: int):
