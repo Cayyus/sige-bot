@@ -6,6 +6,8 @@ from functions.WA.ga_c import ga
 from functions.WA.sc_c import sc
 from functions.nation_c import nation
 from functions.region_c import region
+from functions.verify_c import verify
+from modfunctions.help_c import help
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -37,6 +39,14 @@ async def dispatch_command(interaction, dispatch_link: str):
 @tree.command(name = 'sc', description='To see information about a Security Council proposal')
 async def sc_command(interaction, proposal_id: int):
     await sc(interaction, proposal_id)
+    
+@tree.command(name = 'verify', description="Verifies a user's nation")
+async def verify_command(interaction, nation: str):
+    await verify(interaction, nation, client)
+
+@tree.command(name = 'help', description='Commands List')
+async def help_command(interaction):
+    await help(interaction)
 
 client.run(TOKEN)
 
