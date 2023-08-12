@@ -3,7 +3,7 @@ from discord import app_commands
 import aiohttp
 from credentials import headers
 import xml.etree.ElementTree as ET
-from .staticfuncs import process_vote, url_holder_region, get_wa_badge, get_things
+from .staticfuncs import process_vote, url_holder_region, get_wa_badge, get_things, get_census, splitter
 
 
 async def region(interaction, region_name: str):
@@ -75,25 +75,34 @@ async def region(interaction, region_name: str):
 
                 for_vote_ga, against_vote_ga = await process_vote(session, ga_vote_url, headers, 'GAVOTE', 'FOR', 'AGAINST')
                 for_vote_sc, against_vote_sc = await process_vote(session, sc_vote_url, headers, 'SCVOTE', 'FOR', 'AGAINST')
-               	type_, res_id_ = await get_wa_badge(session, wa_badge_url, headers)
-                res_id_url = f"https://www.nationstates.net/page=WA_past_resolution/id={res_id_}/council=2"
+                type_, res_id_ = await get_wa_badge(session, wa_badge_url, headers)
+                
+                avg_influence_score = await get_census(session, headers, 'region', region_name, 'SCORE', 65)
+                influence_ranking = await get_census(session, headers, 'region', region_name, 'RANK', 65)
+                influence_ranking = splitter(influence_ranking)
+                nations_ranking = await get_census(session, headers, 'region', region_name, 'RANK', 255)
+                nations_ranking = splitter(nations_ranking)
 
+                res_id_url = f"https://www.nationstates.net/page=WA_past_resolution/id={res_id_}/council=2"
+                    
                 region_bullet = [
                     ("Delegate", f"[{delegate}](https://www.nationstates.net/nation={delegate})"),
                     ("Regional Officers", f"`{officers_num}`"),
-                    ("Nations", f"`{nations}`"),
+                    ("Nations", f"`{nations} (#{nations_ranking})`"),
                     ("Power", f"`{power}`"),
+                    ('Average Influence', f"`{avg_influence_score} (#{influence_ranking})`"),
                     ('WA Votes', f"`{delegate_wa_votes}`"),
-                    ('WA Nations', f"`{wa_nations} ({wa_nations_percent:.2f}%)`")
+                    ('WA Nations', f"`{wa_nations} ({wa_nations_percent:.2f}%)`"), 
                 ]
-
-                # Check if res_id_ is not None before including the WA Badges line
-                if res_id_ is not None:
-                    region_bullet.append(('WA Badges', f"`{type_}ed` by [#SC{res_id_}]({res_id_url})"))
+                
+                if type_ is not None and res_id_ is not None:
+                    badge_link = f"`{type_}ed` by [#SC{res_id_}]({res_id_url})"
+                    region_bullet.append(('WA Badges', badge_link))
+                else:
+                    region_bullet.append(('WA Badges', '`None`'))
 
                 region_bullet_2 = []
                 
-
                 region_bullet_3 = [
                     ('GA Vote', f"For: `{for_vote_ga}`\nAgainst: `{against_vote_ga}`"),
                     ('SC Vote', f"For: `{for_vote_sc}`\nAgainst: `{against_vote_sc}`")
@@ -127,7 +136,7 @@ async def region(interaction, region_name: str):
                 embed.set_image(url=banner)
             
                 await interaction.response.send_message(embed=embed)
-    except ET.ParseError:
+    except:
         await interaction.response.send_message('Region does not exist, please check for typos.')
 
 
