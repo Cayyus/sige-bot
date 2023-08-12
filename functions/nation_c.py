@@ -86,8 +86,3 @@ async def nation(interaction, nation_name: str):
         await interaction.response.send_message(embed=embed)
     except:
         await interaction.response.send_message('Nation does not exist, please check for typos.')
-    embed = discord.Embed(title=nation_name, url=link, color=0x00ff00)
-    embed.add_field(name='General Information', value=nation_embed, inline=False)
-    embed.add_field(name='Region', value=f"[{region}]({region_link})")
-    embed.set_thumbnail(url=flag)
-    await interaction.response.send_message(embed=embed)
