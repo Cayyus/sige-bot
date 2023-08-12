@@ -7,6 +7,10 @@ def url_holder_region(region_name, query):
 def url_holder_nation(nation_name, query):
       return f"https://www.nationstates.net/cgi-bin/api.cgi?nation={nation_name}&q={query}"
 
+def splitter(query):
+    x = str(query).split('.')[0]
+    return x
+
 async def process_vote(session, url, headers, parent_element, for_element, against_element):
     async with session.get(url, headers=headers) as response:
         data = await response.text()
@@ -69,3 +73,14 @@ async def get_wa_badge(session, url, headers):
             res_id = None
         
         return _type, res_id
+
+
+async def get_census(session, headers, _type, nr, element, scale: int):
+    async with session.get(f"https://www.nationstates.net/cgi-bin/api.cgi?{_type}={nr};q=census;scale={scale}", headers=headers) as response:
+        data = await response.text()
+        root = ET.fromstring(data)
+        census = root.find('CENSUS')
+        scale = census.find('SCALE')
+        r = scale.find(element).text
+        r = f'{float(r):,.2f}'
+        return r
